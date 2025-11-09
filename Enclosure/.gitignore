@@ -1,0 +1,55 @@
+# --- FreeCAD project files and caches ---
+
+# Backup files (FreeCAD creates these automatically)
+*.FCStd1
+*.FCStd2
+*.FCStd3
+*.FCStd4
+*.FCStd5
+*.FCBak
+*.bak
+
+# Temporary and autosave files
+*.tmp
+*.Temp.FCStd
+*.autosave.FCStd
+*.fcstd#*
+
+# Lock files
+*.FCStd.lock
+*.lck
+
+# Log files
+*.log
+
+# Python bytecode (if you use macros or scripts)
+__pycache__/
+*.py[cod]
+*.pyo
+
+# FreeCAD user configuration (local preferences)
+*.cfg
+*.ini
+*.xml
+
+# Simulation / FEM results
+*.vtk
+*.vtu
+*.dat
+*.inp
+*.frd
+*.res
+*.fcresult
+
+# Build artifacts (if using workbenches or add-ons)
+build/
+dist/
+*.egg-info/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/

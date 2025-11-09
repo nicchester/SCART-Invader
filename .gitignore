@@ -1,40 +1,70 @@
-# For PCBs designed using KiCad: https://www.kicad.org/
-# Format documentation: https://kicad.org/help/file-formats/
+# ===== OS-specific junk =====
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
 
-# Temporary files
-*.000
-*.bak
-*.bck
-*.kicad_pcb-bak
-*.kicad_sch-bak
-*-backups
-*-cache*
-*-bak
-*-bak*
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux / general
 *~
-~*
-_autosave-*
-\#auto_saved_files\#
-*.tmp
-*-save.pro
-*-save.kicad_pcb
-fp-info-cache
-~*.lck
-\#auto_saved_files#
+.nfs*
 
-# Netlist files (exported from Eeschema)
-*.net
+# ===== Editor / IDE files =====
+# VS Code
+.vscode/
+.history/
 
-# Autorouter files (exported from Pcbnew)
-*.dsn
-*.ses
+# JetBrains IDEs (CLion, PyCharm, etc.)
+.idea/
 
-# Exported BOM files
-*.xml
-*.csv
+# Vim / Emacs / other editors
+*.swp
+*.swo
+*.swn
+*~
+.#*
 
-# Archived Backups (KiCad 6.0)
-**/*-backups/*.zip
+# ===== Build / cache / logs =====
+# Compiled binaries and temporary outputs
+*.obj
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.out
+*.elf
+*.bin
+*.hex
+*.map
 
-# Local project settings
-*.kicad_prl
+# Arduino build artifacts
+*.arduino_build*/
+*.ino.cpp
+*.ino.bin
+*.ino.hex
+
+# Temporary or cache directories
+build/
+cache/
+tmp/
+temp/
+
+# Logs
+*.log
+
+# ===== Python bits (if you use scripts or macros) =====
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ===== Miscellaneous =====
+# Backup files
+*.bak
+*.old
+*.orig

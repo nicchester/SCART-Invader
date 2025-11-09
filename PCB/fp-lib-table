@@ -1,0 +1,6 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Hongfa")(type "KiCad")(uri "${KIPRJMOD}/Hongfa.pretty")(options "")(descr ""))
+  (lib (name "SCART")(type "KiCad")(uri "${KIPRJMOD}/SCART.pretty")(options "")(descr ""))
+  (lib (name "Connector_RCA")(type "KiCad")(uri "${KIPRJMOD}/Connector_RCA.pretty")(options "")(descr ""))
+)

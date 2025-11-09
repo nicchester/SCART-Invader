@@ -1,0 +1,233 @@
+(footprint "RCA-Phono_CUI-Devices_RCJ-01X_Horizontal"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(descr "RCA Phono Connector, vertical, PCB mount, RCJ-02X, (https://www.cuidevices.com/product/interconnect/connectors/rca-connectors/rcj-02-series)")
+	(tags "RCJ-021 RCJ-022 RCJ-023 RCJ-024 RCJ-025 RCJ-026 RCJ-027 RCA phono jack connector CUI")
+	(property "Reference" "REF**"
+		(at -0.04 2.25 0)
+		(layer "F.SilkS")
+		(uuid "2a0be9e5-bcc2-4d6d-a17e-7e5fbe4725a5")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "RCA-Phono_CUI-Devices_RCJ-01X_Horizontal"
+		(at 0.06 -8 0)
+		(layer "F.Fab")
+		(uuid "1b648c15-6c65-46bd-9d51-a4f860ab1275")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" "RCA-Phono_CUI-Devices_RCJ-01X_Horizontal"
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d670cb0c-878d-4a89-a700-b657f8f6068e")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "be183006-0902-4e80-b6d6-c8127547bc1d")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d1664d79-f81f-40c0-8638-003967d910fe")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr through_hole)
+	(fp_line
+		(start -5 -5.2)
+		(end -5 -2.032)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "948f5f60-5dab-49e0-a20f-a71e4166dc18")
+	)
+	(fp_line
+		(start -4.15 -6.05)
+		(end -4.15 -11.98)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ce0f3d80-8af9-439c-8ddb-0e8f4ffaf8de")
+	)
+	(fp_line
+		(start -2.88 -13.25)
+		(end 2.88 -13.25)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "97f60853-87e2-4a72-a0c6-326e18d8ec89")
+	)
+	(fp_line
+		(start 4.15 -11.98)
+		(end 4.15 -6.05)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "2508c3fd-da12-4c48-a0a5-9a17f6f8e274")
+	)
+	(fp_line
+		(start 5 -5.2)
+		(end 5 -2.032)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "c874ca44-d2b5-4b3a-975e-885e8a16c1cd")
+	)
+	(fp_arc
+		(start -4.15 -11.98)
+		(mid -3.778026 -12.878026)
+		(end -2.88 -13.25)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "13017725-c9e0-4f1a-98b3-cfc7196662a3")
+	)
+	(fp_arc
+		(start -4.15 -6.05)
+		(mid -4.398959 -5.448959)
+		(end -5 -5.2)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "0b666abe-4968-4476-a7a2-81a3e30e1b31")
+	)
+	(fp_arc
+		(start 2.88 -13.25)
+		(mid 3.778026 -12.878026)
+		(end 4.15 -11.98)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "6dd1aab9-ac84-4340-a566-929dc1137b27")
+	)
+	(fp_arc
+		(start 5 -5.2)
+		(mid 4.398959 -5.448959)
+		(end 4.15 -6.05)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "7557b46d-0090-434b-b0ea-d321baa26693")
+	)
+	(fp_line
+		(start -7.112 -15.24)
+		(end -7.112 2.032)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "00809a8e-b797-40be-91f1-96da6697ef46")
+	)
+	(fp_line
+		(start -7.112 2.032)
+		(end 7.112 2.032)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "7f5c20ee-c417-46c4-9e21-34752db5ce15")
+	)
+	(fp_line
+		(start 7.112 -15.24)
+		(end -7.112 -15.24)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "a54fe3c0-3069-492e-8dd5-df74e8f0e39e")
+	)
+	(fp_line
+		(start 7.112 2.032)
+		(end 7.112 -15.24)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "e4a80598-74b9-4ffb-b4fc-42ce87b3e88c")
+	)
+	(pad "1" thru_hole circle
+		(at 0 0)
+		(size 2.7 2.7)
+		(drill 1.7)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "52bdfe47-2226-4c55-8bdc-2edd8ebfd928")
+	)
+	(pad "2" thru_hole circle
+		(at -5 0)
+		(size 3.6 3.6)
+		(drill 2.6)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "458bfd1e-693c-4aeb-8aef-d5d450da9dda")
+	)
+	(pad "2" thru_hole circle
+		(at 0 -4.5)
+		(size 3.6 3.6)
+		(drill 2.6)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "b097bfde-9072-4019-a04b-6e82657df218")
+	)
+	(pad "2" thru_hole circle
+		(at 5 0)
+		(size 3.6 3.6)
+		(drill 2.6)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "ebd06f0e-d1ef-4a0e-b9e9-4a4dcdaa7964")
+	)
+)
