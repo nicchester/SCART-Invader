@@ -69,7 +69,8 @@ const byte channelStates[] =
 // Byte representing state of the second shift register (Status & RGB signal via a resistor ladder) 
 byte statusMode = STATUS_OFF; 
 
-unsigned long lastSwitchTime = 0; 
+// Time since the front panel button was pressed 
+unsigned long lastManualSwitch = 0; 
 
 // Time to ignore the button presses after a press is initially detected 
 const unsigned long DEBOUNCE_TIME = 100; 
@@ -84,17 +85,16 @@ byte selectedChannel = 0;
 bool lock = false; 
 
 // Whether the device is in 'auto' mode 
-bool autoMode = true; 
+bool autoMode = true;
 
-// When a 'valid' signal was last detected on a locked-on signal 
-// This prevents disconnection if the input goes blank 
+// Last time a 'valid' voltage was seen on the current auto-detected channel 
 unsigned long lastSignalDetect; 
 
 // Timeout for an auto AV signal (milliseconds)
-const unsigned long SIG_TIMEOUT = 4000; 
+const unsigned long SIG_TIMEOUT = 3000; 
 
 // Timeout after manual switching 
-const unsigned long MANUAL_TIMEOUT = 2000; 
+const unsigned long MANUAL_TIMEOUT = 5000; 
 
 unsigned long lastBlinkMillis = 0; 
 unsigned long statusLedOn = true; 
@@ -130,7 +130,7 @@ bool detectSignal()
 }
 
 
-/* Shifts out data to relay driver and aspect ratio/RGB switching shift registers */
+// Shifts out data to relay driver and aspect ratio/RGB switching registers 
 void updateOutput()
 {
   digitalWrite(RCLK, LOW);
@@ -185,9 +185,9 @@ void setup()
   updateOutput(); 
   enableOutput(true); 
 
-  lastSwitchTime = millis(); 
+  lastManualSwitch = millis(); 
 
-  digitalWrite(STATUS_LED, HIGH); 
+  digitalWrite(STATUS_LED, LOW); 
 
 }
 
@@ -215,61 +215,10 @@ void blinkStatus()
   }
 }
 
-void loop() 
+void handleFPButton()
 {
-
-  blinkStatus(); 
-
-  currentMillis = millis(); 
-  // If mode is 'auto' 
-  if(autoMode && currentMillis - lastSwitchTime >= 1000)
-  {
-    // Select channel using the solid state muxes
-    syncSelect(muxChannel); 
-
-    // If the device is currently auto-locked to an input, 
-    // check if the signal has disappeared after a given timeout 
-    if(lock)
-    {
-      currentMillis = millis(); 
-      // Check if a signal is still detected, if so store the time it was seen
-      signalDetected = detectSignal(); 
-      if(signalDetected) lastSignalDetect = millis(); 
-      // If we no longer detect a signal, and the grace period is satisfied, then remove the lock and disable output 
-      if(!signalDetected && currentMillis - lastSignalDetect >= SIG_TIMEOUT)
-      {      
-        lock = false; 
-        delay(100); 
-        selectedChannel = 0; 
-        selectChannel(selectedChannel); 
-      }
-    }
-    else
-    {
-      // Else, check for a valid signal on the current input of the sync mux. 
-      currentMillis = millis(); 
-      if(detectSignal())
-      {
-        lastSignalDetect = millis(); 
-        lock = true; 
-        selectedChannel = (muxChannel / 2) + 1; 
-        selectChannel(selectedChannel); 
-        delay(100); 
-      }
-      else
-      {
-        muxChannel++; 
-  
-        if(muxChannel > 15) muxChannel = 0; 
-      }
-    } 
-  }
-
-  // If the front panel button is pressed, switch to manual mode and cycle through the inputs manually 
-  if(!digitalRead(FP_BUTTON))
-  {
     currentMillis = millis(); 
-    if(currentMillis - lastSwitchTime >= DEBOUNCE_TIME)
+    if(currentMillis - lastManualSwitch >= DEBOUNCE_TIME)
     {
       delay(100); 
 
@@ -293,9 +242,75 @@ void loop()
       selectChannel(selectedChannel); 
 
       delay(100); 
-      lastSwitchTime = millis(); 
+      lastManualSwitch = millis(); 
+    }
+}
+
+void handleAutoMode()
+{
+  currentMillis = millis(); 
+
+  // Return if we're not outside of the grace period after user manually switching
+  if(currentMillis - lastManualSwitch <= MANUAL_TIMEOUT)
+  {
+    return; 
+  }
+  
+  // Select channel using the solid state muxes
+  syncSelect(muxChannel); 
+
+  // If the device is currently auto-locked to an input, 
+  // check if the signal has disappeared after a given timeout 
+  if(lock)
+  {
+    currentMillis = millis(); 
+    // Check if a signal is still detected, if so store the time it was seen
+    signalDetected = detectSignal(); 
+    if(signalDetected) lastSignalDetect = millis(); 
+    
+    // If we no longer detect a signal, and the grace period is satisfied, then remove the lock and disable output 
+    if(!signalDetected && currentMillis - lastSignalDetect >= SIG_TIMEOUT)
+    {      
+      lock = false; 
+      delay(100); 
+      selectedChannel = 0; 
+      selectChannel(selectedChannel); 
     }
   }
+  else
+  {
+    // Else, check for a valid signal on the current input of the sync mux. 
+    currentMillis = millis(); 
+    if(detectSignal())
+    {
+      lastSignalDetect = millis(); 
+      lock = true; 
+      selectedChannel = (muxChannel / 2) + 1; 
+      selectChannel(selectedChannel); 
+      delay(100); 
+    }
+    else
+    {
+      muxChannel++; 
 
+      if(muxChannel > 15) muxChannel = 0; 
+    }
+  } 
+}
+
+void loop() 
+{
+  blinkStatus(); 
+  
+  if(autoMode)
+  {
+    handleAutoMode(); 
+  }
+
+  // If the front panel button is pressed
+  if(!digitalRead(FP_BUTTON))
+  {
+    handleFPButton(); 
+  }
   
 }
