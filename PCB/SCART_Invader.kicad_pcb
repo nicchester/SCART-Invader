@@ -12274,7 +12274,7 @@
 			(at 0 -6.35 0)
 			(unlocked yes)
 			(layer "F.SilkS")
-			(uuid "727d3aa2-548f-4c14-aa5b-6b0dbf3aa3ae")
+			(uuid "c5288683-5999-47be-9ef7-ca0091e15495")
 			(effects
 				(font
 					(size 0.8 0.8)
@@ -12282,12 +12282,12 @@
 				)
 			)
 		)
-		(property "Value" "RCJ-32234"
+		(property "Value" "MR-100H"
 			(at 0 8.89 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "74dbdc5b-2009-4122-a596-eb05d8759dc3")
+			(uuid "48e53e82-fdec-42bb-a958-801ba853a26d")
 			(effects
 				(font
 					(size 1 1)
@@ -12295,12 +12295,12 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.mouser.co.uk/datasheet/2/1628/rcj_32xxx-3510905.pdf"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "d8f2158e-adaa-4d0d-a55c-a98cb9990ae5")
+			(uuid "1c7b7031-fed1-4047-9320-9e6b86b0d2d3")
 			(effects
 				(font
 					(size 1 1)
@@ -12313,7 +12313,7 @@
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "bcdfed34-a235-4483-bc09-12ac2f2be710")
+			(uuid "7a1a035a-6882-4eeb-8123-ccc54491792f")
 			(effects
 				(font
 					(size 1 1)

@@ -18554,6 +18554,15 @@
 				(hide yes)
 			)
 		)
+		(property "Supplier" "https://www.tme.eu/gb/details/hfd4_12/miniature-electromagnetic-relays/hongfa-relay/"
+			(at 111.76 137.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "a3f38953-279f-4d0d-ac87-c177e068a92e")
 		)
@@ -25669,6 +25678,15 @@
 				(hide yes)
 			)
 		)
+		(property "Supplier" "https://www.tme.eu/gb/details/hfd4_12/miniature-electromagnetic-relays/hongfa-relay/"
+			(at 111.76 147.32 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "a3f38953-279f-4d0d-ac87-c177e068a934")
 		)
@@ -27736,7 +27754,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" " ~"
+		(property "Datasheet" "~"
 			(at 50.8 339.09 0)
 			(effects
 				(font
@@ -27746,6 +27764,15 @@
 			)
 		)
 		(property "Description" "Prise Peritel"
+			(at 50.8 340.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier" "https://www.rapidonline.com/trucomponents-202715-scart-connector-socket-right-angle-black-20-2715"
 			(at 50.8 340.36 0)
 			(effects
 				(font
@@ -28868,7 +28895,7 @@
 				)
 			)
 		)
-		(property "Value" "RCJ-32234"
+		(property "Value" "MR-100H"
 			(at 422.402 210.82 0)
 			(effects
 				(font
@@ -28885,7 +28912,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.mouser.co.uk/datasheet/2/1628/rcj_32xxx-3510905.pdf"
+		(property "Datasheet" ""
 			(at 423.926 203.454 0)
 			(effects
 				(font
@@ -28896,6 +28923,15 @@
 		)
 		(property "Description" "Triple RCA Connector"
 			(at 423.926 200.914 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier" "https://www.ebay.co.uk/itm/160807949159"
+			(at 422.91 217.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -31048,6 +31084,15 @@
 			)
 		)
 		(property "Description" "Power Logic 8-bit Shift Register, DIP-8/SOIC-8"
+			(at 359.41 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier" "https://www.mouser.co.uk/ProductDetail/Microchip-Technology/MIC5891YN?qs=kh6iOki%2FeLE0VkU6OGtmGA%3D%3D"
 			(at 359.41 43.18 0)
 			(effects
 				(font
@@ -38589,6 +38634,15 @@
 		)
 		(property "Description" ""
 			(at 530.098 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Supplier" "https://www.tme.eu/gb/details/hfd4_12/miniature-electromagnetic-relays/hongfa-relay/"
+			(at 529.59 43.18 90)
 			(effects
 				(font
 					(size 1.27 1.27)
