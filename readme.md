@@ -12,7 +12,15 @@ An open-hardware RGB SCART multiplexer with features:
 - Enclosure printable on most home 3D printers 
 - 2-layer PCB design for cheap manufacture by your favourite PCB fabricator
 
-### Todo list
+---
+
+![alt text](board.png)
+
+![alt text](cover.png)
+
+---
+
+### TODOs
 
 - Implement remote control 
 - Implement configuration interface over UART 
