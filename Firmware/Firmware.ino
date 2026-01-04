@@ -117,6 +117,8 @@ void setup()
   Serial.println("Play SCART Invaders! Happy Gaming!"); 
 
   checkEEPROM(); 
+
+  irrecv.enableIRIn(); // Start the receiver
   
   /* Set mode of all I/O pins */
   pinMode(RCLK, OUTPUT); 
@@ -150,6 +152,24 @@ void setup()
 
   digitalWrite(STATUS_LED, LOW); 
 
+}
+
+// Blink status LED a given number of times 
+// to confirm an action via remote 
+void blinkConfirm(byte blinks) 
+{
+  digitalWrite(STATUS_LED, LOW); 
+  delay(1000);
+
+  for(int i = 0; i < blinks; i++)
+  {
+    digitalWrite(STATUS_LED, HIGH); 
+    delay(100);
+    digitalWrite(STATUS_LED, LOW); 
+    delay(100); 
+  }
+  
+  delay(900);
 }
 
 // Blink the status led when not locked to an input, or steady when locked 
@@ -254,7 +274,7 @@ void changeChannelManual(byte channel)
 // Cycle aspect ratio 
 void changeAspectRatio()
 {
-  // Return if we're 
+  // Return if we're on zero, output should be disabled in search mode 
   if(selectedChannel == 0)
     return; 
 
@@ -263,17 +283,23 @@ void changeAspectRatio()
   {
     statusMode &= ~ASP_WIDE;
     statusMode |= ASP_NORMAL; 
+
+    blinkConfirm(2); 
   }
   // if 4:3 then switch to off
   else if(statusMode & ASP_NORMAL)
   {
     statusMode &= ~ASP_WIDE; 
     statusMode &= ~ASP_NORMAL; 
+
+    blinkConfirm(1); 
   }
   // if off then switch to wide 
   else
   {
     statusMode |= ASP_WIDE; 
+
+    blinkConfirm(3); 
   }
 
   updateOutput(); 
@@ -291,6 +317,11 @@ void changeRGB()
     // switch between RGB and no RGB 
     statusMode ^= MODE_RGB;
 
+    if(statusMode & MODE_RGB)
+      blinkConfirm(2); 
+    else
+      blinkConfirm(1); 
+
     updateOutput(); 
 
     EEPROM.update(EEPROM_CHANNEL_MODES_BASE + selectedChannel, statusMode); 
@@ -304,6 +335,11 @@ void changeCSYNC()
 
   // Switch CSYNC on/off 
   statusMode ^= MODE_CSYNC;
+
+  if(statusMode & MODE_CSYNC)
+    blinkConfirm(2); 
+  else
+    blinkConfirm(1); 
 
   updateOutput(); 
 
@@ -449,6 +485,8 @@ void loop()
   {
     handleAutoMode(); 
   }
+
+  handleIR(); 
 
   // If the front panel button is pressed then increment the current channel 
   if(!digitalRead(FP_BUTTON))
