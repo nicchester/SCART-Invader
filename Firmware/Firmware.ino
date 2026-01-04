@@ -1,6 +1,9 @@
 #include <EEPROM.h>
 #include <IRremote.h> 
 
+// AVRDude Command I used to burn firmware with USBasp (for future reference)
+// sudo avrdude -c usbasp -p m328p -U flash:w:Firmware.ino.with_bootloader.standard.hex:i 
+
 /*** Pin definitions ***/
 
 #define IR_REMOTE   8 
