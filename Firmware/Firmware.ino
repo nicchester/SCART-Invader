@@ -1,82 +1,18 @@
 #include <EEPROM.h>
 #include <IRremote.h> 
+#include "defs.h"
 
 // AVRDude Command I used to burn firmware with USBasp (for future reference)
 // sudo avrdude -c usbasp -p m328p -U flash:w:Firmware.ino.with_bootloader.standard.hex:i 
 
-/*** Pin definitions ***/
-
-#define IR_REMOTE   8 
-#define FP_BUTTON   10
-#define STATUS_LED  13
-
-#define SIG_DETECT  A0
-#define SYNCMUX_A   A3 
-#define SYNCMUX_B   A2
-#define SYNCMUX_C   A1
-
-#define _LO_SYNC_OE 2
-#define _RL_OE      3
-#define _HI_SYNC_OE 4
-#define RCLK        5
-#define SRCK        6
-#define DATA        7
-
-/* Define bytes for relay driver shift register */
-const byte rlBytes[] = 
-{
-0b00000001, 
-0b00000000,
-0b00000011, 
-0b00000101, 
-0b00001001, 
-0b10000001, 
-0b01000001, 
-0b00100001, 
-0b00010001, 
-
-
-}; 
-
 // Represents the state of the first shift register (relay driver) 
 byte output = 0x0; 
-
-/* Aspect ratio and RGB switching shift register bytes */
-
-const byte ASP_WIDE   = 0b00000010; // Force 16:9 aspect ratio 
-const byte ASP_NORMAL = 0b00000001; // Force 4:3 aspect ratio 
-const byte STATUS_OFF = 0b00000000; // No output at all
-const byte MODE_RGB   = 0b00001000; // Fast RGB switching enabled, forces TV to RGB video
-const byte MODE_CVBS  = 0b00000000; // No fast RGB switching; may switch TV to composite video
-const byte MODE_CSYNC = 0b10000000; // Switch CVBS via to LM1881 sync cleaner 
-
-const byte DEFAULT_STATE = ASP_NORMAL | MODE_CSYNC | MODE_RGB; 
-
-const byte USE_RGB  = ASP_NORMAL | MODE_CSYNC | MODE_RGB; 
-const byte USE_CVBS = ASP_NORMAL | MODE_CVBS; 
-
-const byte channelStates[] = 
-{
-  STATUS_OFF, 
-  USE_RGB, 
-  USE_RGB, 
-  USE_RGB, 
-  USE_RGB, 
-
-  USE_CVBS,
-  USE_CVBS,
-  USE_CVBS,
-  USE_CVBS  
-}; 
 
 // Byte representing state of the second shift register (Status & RGB signal via a resistor ladder) 
 byte statusMode = STATUS_OFF; 
 
 // Time since the front panel button was pressed 
 unsigned long lastManualSwitch = 0; 
-
-// Time to ignore the button presses after a press is initially detected 
-const unsigned long DEBOUNCE_TIME = 100; 
 
 // Channel selected on the solid state muxes 
 byte muxChannel = 0; 
@@ -93,16 +29,16 @@ bool autoMode = true;
 // Last time a 'valid' voltage was seen on the current auto-detected channel 
 unsigned long lastSignalDetect; 
 
-// Timeout for an auto AV signal (milliseconds)
-const unsigned long SIG_TIMEOUT = 3000; 
 
-// Timeout after manual switching 
-const unsigned long MANUAL_TIMEOUT = 5000; 
-
+// Last time the status LED blinked in 'search' mode 
 unsigned long lastBlinkMillis = 0; 
+
+// state of the status LED
 unsigned long statusLedOn = true; 
-unsigned long currentMillis;
-bool signalDetected = false; 
+
+// IR decoder stuff 
+IRrecv irrecv(IR_REMOTE);
+decode_results results;
 
 /* Selects input on sync muxes */
 void syncSelect(byte channel)
@@ -125,13 +61,12 @@ bool detectSignal()
   while(millis() < endtime)
   {
     adcVal = analogRead(SIG_DETECT);
-    if(adcVal > 5)
+    if(adcVal > 10)
       result = true; 
   }
 
   return result; 
 }
-
 
 // Shifts out data to relay driver and aspect ratio/RGB switching registers 
 void updateOutput()
@@ -150,15 +85,38 @@ void enableOutput(bool enable)
 
 void selectChannel(byte channel)
 {
-  statusMode = channelStates[channel]; 
+  // Get the status byte out of the EEPROM 
+  statusMode = EEPROM.read(EEPROM_CHANNEL_MODES_BASE + channel); 
+
+  // Update the output byte 
   output = rlBytes[channel]; 
 
+  // Write out the data 
   updateOutput(); 
+}
+
+// Check EEPROM for magic number indicating first run
+void checkEEPROM()
+{
+  if (EEPROM.read(EEPROM_MAGIC_ADDR) != EEPROM_MAGIC) 
+  {
+
+    for(int i = 0; i <= 8; i++)
+    {
+      EEPROM.write(EEPROM_CHANNEL_MODES_BASE + i, defaultChannelStates[i]); 
+    }
+
+    // Write magic number 
+    EEPROM.write(EEPROM_MAGIC_ADDR, EEPROM_MAGIC);
+  }
 }
 
 void setup() 
 {
   Serial.begin(115200); 
+  Serial.println("Play SCART Invaders! Happy Gaming!"); 
+
+  checkEEPROM(); 
   
   /* Set mode of all I/O pins */
   pinMode(RCLK, OUTPUT); 
@@ -197,6 +155,8 @@ void setup()
 // Blink the status led when not locked to an input, or steady when locked 
 void blinkStatus()
 {
+  unsigned long currentMillis; 
+  
   // If the device is set to an input then show a steady status light 
   if(!autoMode || lock)
   {
@@ -218,9 +178,9 @@ void blinkStatus()
   }
 }
 
-void handleFPButton()
+void stepChannel(bool up)
 {
-    currentMillis = millis(); 
+    unsigned long currentMillis = millis(); 
     if(currentMillis - lastManualSwitch >= DEBOUNCE_TIME)
     {
       delay(100); 
@@ -229,11 +189,26 @@ void handleFPButton()
       autoMode = false; 
       lock = false; 
 
-      // Increment the target channel 
-      selectedChannel++; 
+      if(up)
+      {
+        // Increment the target channel 
+        selectedChannel++; 
 
-      // If we overflow the number of channels, go back to zero indicating no selection on the AV mux 
-      if(selectedChannel > 8) selectedChannel = 0; 
+        // If we overflow the number of channels, 
+        // go back to zero indicating no selection on the AV mux 
+        if(selectedChannel > 8) selectedChannel = 0; 
+      }
+      else
+      {
+        if(selectedChannel == 0)
+        {
+          selectedChannel = 8; 
+        }
+        else
+        {
+          selectedChannel--; 
+        }
+      }
 
       // If channel is zero then set output off and enable 'auto' mode, 
       // else update and enable the output 
@@ -249,9 +224,96 @@ void handleFPButton()
     }
 }
 
+void changeChannelManual(byte channel)
+{
+    unsigned long currentMillis = millis(); 
+    if(currentMillis - lastManualSwitch >= DEBOUNCE_TIME)
+    {
+      delay(100); 
+
+      // Switch out of auto mode and remove lock
+      autoMode = false; 
+      lock = false; 
+
+      selectedChannel = channel; 
+
+      // If channel is zero then set output off and enable 'auto' mode, 
+      // else update and enable the output 
+      if(selectedChannel == 0) 
+      {
+        autoMode = true; 
+      }
+
+      selectChannel(selectedChannel); 
+
+      delay(100); 
+      lastManualSwitch = millis(); 
+    }
+}
+
+// Cycle aspect ratio 
+void changeAspectRatio()
+{
+  // Return if we're 
+  if(selectedChannel == 0)
+    return; 
+
+  // if wide then switch to 4:3 
+  if(statusMode & ASP_WIDE)
+  {
+    statusMode &= ~ASP_WIDE;
+    statusMode |= ASP_NORMAL; 
+  }
+  // if 4:3 then switch to off
+  else if(statusMode & ASP_NORMAL)
+  {
+    statusMode &= ~ASP_WIDE; 
+    statusMode &= ~ASP_NORMAL; 
+  }
+  // if off then switch to wide 
+  else
+  {
+    statusMode |= ASP_WIDE; 
+  }
+
+  updateOutput(); 
+
+  // Update the EEPROM with the channel mode 
+  EEPROM.update(EEPROM_CHANNEL_MODES_BASE + selectedChannel, statusMode); 
+}
+
+// Toggle RGB/CVBS
+void changeRGB()
+{
+  if(selectedChannel == 0)
+    return; 
+
+    // switch between RGB and no RGB 
+    statusMode ^= MODE_RGB;
+
+    updateOutput(); 
+
+    EEPROM.update(EEPROM_CHANNEL_MODES_BASE + selectedChannel, statusMode); 
+}
+
+// Toggle LM1881 sync stripper 
+void changeCSYNC()
+{
+  if(selectedChannel == 0)
+    return; 
+
+  // Switch CSYNC on/off 
+  statusMode ^= MODE_CSYNC;
+
+  updateOutput(); 
+
+  EEPROM.update(EEPROM_CHANNEL_MODES_BASE + selectedChannel, statusMode); 
+}
+
 void handleAutoMode()
 {
-  currentMillis = millis(); 
+  unsigned long currentMillis = millis();
+  bool signalDetected = false;  
 
   // Return if we're not outside of the grace period after user manually switching
   if(currentMillis - lastManualSwitch <= MANUAL_TIMEOUT)
@@ -301,6 +363,84 @@ void handleAutoMode()
   } 
 }
 
+void handleIR()
+{
+  unsigned long currentMillis = millis(); 
+
+  if (irrecv.decode(&results))
+  {
+    if(currentMillis - lastManualSwitch >= DEBOUNCE_TIME)
+    {
+      switch(results.value)
+      {
+        case BUTTON_1:
+          changeChannelManual(1);
+          break; 
+
+        case BUTTON_2:
+          changeChannelManual(2);
+          break; 
+
+        case BUTTON_3:
+          changeChannelManual(3);
+          break; 
+
+        case BUTTON_4:
+          changeChannelManual(4);
+          break; 
+
+        case BUTTON_5:
+          changeChannelManual(5);
+          break; 
+
+        case BUTTON_6:
+          changeChannelManual(6);
+          break; 
+
+        case BUTTON_7:
+          changeChannelManual(7);
+          break; 
+
+        case BUTTON_8:
+          changeChannelManual(8);
+          break; 
+
+        case BUTTON_0:
+          changeChannelManual(0);
+          break; 
+
+        case CH_UP:
+          stepChannel(true);
+          break; 
+
+        case CH_DOWN:
+          stepChannel(false);
+          break;
+
+        case BUTTON_RED: 
+          changeAspectRatio(); 
+          break; 
+
+        case BUTTON_GREEN: 
+          changeRGB(); 
+          break;
+
+        case BUTTON_YELLOW:
+          changeCSYNC(); 
+          break; 
+
+        default:
+          Serial.print("Unknown IR command: 0x");
+          Serial.println(results.value, HEX); 
+          break; 
+      }
+    }
+
+    lastManualSwitch = millis();
+    irrecv.resume();
+  }
+}
+
 void loop() 
 {
   blinkStatus(); 
@@ -310,10 +450,10 @@ void loop()
     handleAutoMode(); 
   }
 
-  // If the front panel button is pressed
+  // If the front panel button is pressed then increment the current channel 
   if(!digitalRead(FP_BUTTON))
   {
-    handleFPButton(); 
+    stepChannel(true); 
   }
   
 }
